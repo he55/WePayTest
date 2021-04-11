@@ -1,0 +1,9 @@
+Package: com.he55.wepay
+Name: WePay
+Version: 1.0
+Architecture: iphoneos-arm
+Description: WePay
+Maintainer: he55
+Author: he55
+Section: Tweaks
+Depends: firmware (>= 7.0), mobilesubstrate
