@@ -6,29 +6,27 @@
 - (void)reloadTableData {
     %orig;
 
-    WCTableViewSectionManager *section1 = [%c(WCTableViewSectionManager) sectionInfoDefaut];
+    WCTableViewSectionManager *section = [%c(WCTableViewSectionManager) sectionInfoDefaut];
     BOOL serviceEnable = [WPConfig sharedConfig].serviceEnable;
 
-    [section1 addCell:[%c(WCTableViewCellManager) switchCellForSel:@selector(switchServiceEnable:) target:self title:@"WePay" on:serviceEnable]];
+    [section addCell:[%c(WCTableViewCellManager) switchCellForSel:@selector(switchServiceEnable:) target:self title:@"WePay" on:serviceEnable]];
 
     WCTableViewCellManager *cell = serviceEnable ?
         [%c(WCTableViewCellManager) normalCellForSel:@selector(settingDelay) target:self title:@"地址" rightValue:[WPConfig sharedConfig].serviceURL] :
         [%c(WCTableViewNormalCellManager) normalCellForTitle:@"地址" rightValue:[WPConfig sharedConfig].serviceURL];
-    [section1 addCell:cell];
+    [section addCell:cell];
 
-    [section1 addCell:[%c(WCTableViewCellManager) normalCellForSel:@selector(showGitHub) target:self title:@"GitHub" rightValue:@"Star ★"]];
+    [section addCell:[%c(WCTableViewCellManager) normalCellForSel:@selector(showGitHub) target:self title:@"GitHub" rightValue:@"Star ★"]];
 
     WCTableViewManager *tableViewMgr = [self valueForKey:@"m_tableViewMgr"];
-    [tableViewMgr insertSection:section1 At:4];
+    [tableViewMgr insertSection:section At:4];
     [[tableViewMgr getTableView] reloadData];
 }
 
 %new
 - (void)switchServiceEnable:(UISwitch *)sw {
     [WPConfig sharedConfig].serviceEnable = sw.on;
-
-    WCTableViewManager *tableViewMgr = [self valueForKey:@"m_tableViewMgr"];
-    [[tableViewMgr getTableView] reloadData];
+    [self reloadTableData];
 }
 
 %new
