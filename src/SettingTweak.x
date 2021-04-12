@@ -20,30 +20,14 @@
 
     [section1 addCell:[%c(WCTableViewCellManager) normalCellForSel:@selector(showGithub) target:self title:@"我的 GitHub" rightValue:@"★ star"]];
     [m_tableViewMgr insertSection:section1 At:4];
-
-
-    WCTableViewSectionManager *section2 = [%c(WCTableViewSectionManager) sectionInfoDefaut];
-    [section2 addCell:[%c(WCTableViewCellManager) switchCellForSel:@selector(settingMessageRevoke:) target:self title:@"消息防撤回" on:[WPConfig sharedConfig].messageRevokeEnable]];
-    [m_tableViewMgr insertSection:section2 At:4];
-
-    [self reloadData2];
-}
-
-%new
-- (void)reloadData2 {
-    WCTableViewManager *m_tableViewMgr = [self valueForKey:@"m_tableViewMgr"];
     [[m_tableViewMgr getTableView] reloadData];
 }
 
 %new
 - (void)switchRedEnvelop:(UISwitch *)sw {
     [WPConfig sharedConfig].serviceEnable = sw.on;
-    [self reloadData2];
-}
-
-%new
-- (void)settingMessageRevoke:(UISwitch *)sw {
-    [WPConfig sharedConfig].messageRevokeEnable = sw.on;
+    WCTableViewManager *m_tableViewMgr = [self valueForKey:@"m_tableViewMgr"];
+    [[m_tableViewMgr getTableView] reloadData];
 }
 
 %new
