@@ -10,7 +10,6 @@
 
 static NSString * const kServiceEnableKey = @"ServiceEnable";
 static NSString * const kServiceURLKey = @"ServiceURL";
-static NSString * const kMessageRevokeEnableKey = @"MessageRevokeEnable";
 
 @implementation WPConfig {
     NSUserDefaults *_userDefaults;
@@ -31,7 +30,6 @@ static NSString * const kMessageRevokeEnableKey = @"MessageRevokeEnable";
         _userDefaults = [NSUserDefaults standardUserDefaults];
         _serviceEnable = [_userDefaults boolForKey:kServiceEnableKey];
         _serviceURL = [_userDefaults stringForKey:kServiceURLKey];
-        _messageRevokeEnable = [_userDefaults boolForKey:kMessageRevokeEnableKey];
     }
     return self;
 }
@@ -47,13 +45,6 @@ static NSString * const kMessageRevokeEnableKey = @"MessageRevokeEnable";
 - (void)setServiceURL:(NSString *)serviceURL {
     _serviceURL = serviceURL;
     [_userDefaults setObject:serviceURL forKey:kServiceURLKey];
-    [_userDefaults synchronize];
-}
-
-
-- (void)setMessageRevokeEnable:(BOOL)messageRevokeEnable {
-    _messageRevokeEnable = messageRevokeEnable;
-    [_userDefaults setBool:messageRevokeEnable forKey:kMessageRevokeEnableKey];
     [_userDefaults synchronize];
 }
 

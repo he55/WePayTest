@@ -16,7 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) BOOL serviceEnable;
 @property (nonatomic, copy) NSString *serviceURL;
-@property (nonatomic, assign) BOOL messageRevokeEnable;
 
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
