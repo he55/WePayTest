@@ -1,4 +1,3 @@
-#import <UIKit/UIKit.h>
 #import "WeChat.h"
 #import "WPConfig.h"
 #import "HWZWeChatMessage.h"
@@ -207,32 +206,6 @@ void saveOrderTaskLog(NSDictionary *orderTask) {
     [NSTimer scheduledTimerWithTimeInterval:2.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
         getOrderTask();
     }];
-}
-
-%end
-
-
-// 通讯录
-%hook ContactsViewController
-
-- (void)viewDidLoad {
-    %orig;
-
-    UIBarButtonItem *barButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"我" style:UIBarButtonItemStylePlain target:self action:@selector(handleShowQRInfoView)];
-    [barButtonItem setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor labelColor]} forState:UIControlStateNormal];
-    [barButtonItem setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor labelColor]} forState:UIControlStateHighlighted];
-
-    self.navigationItem.leftBarButtonItem = barButtonItem;
-}
-
-%new
-- (void)handleShowQRInfoView {
-    UITabBarController *tabBarController = [%c(CAppViewControllerManager) getTabBarController];
-    tabBarController.selectedIndex = 0;
-
-    CAppViewControllerManager *appViewControllerManager = [%c(CAppViewControllerManager) getAppViewControllerManager];
-    NewMainFrameViewController *newMainFrameViewController = [appViewControllerManager getNewMainFrameViewController];
-    [newMainFrameViewController showQRInfoView];
 }
 
 %end
