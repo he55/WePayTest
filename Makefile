@@ -1,16 +1,16 @@
 DEBUG = 0
 # FINALPACKAGE = 1
 
-ARCHS = armv7 arm64
-TARGET := iphone:clang:latest:7.0
-INSTALL_TARGET_PROCESSES = Filza
+ARCHS = arm64 arm64e
+TARGET := iphone:clang:latest:11.0
+INSTALL_TARGET_PROCESSES = WeChat
 
 
 include $(THEOS)/makefiles/common.mk
 
-TWEAK_NAME = AppInfoForFilza
+TWEAK_NAME = WePay
 
-AppInfoForFilza_FILES = Tweak.x
-AppInfoForFilza_CFLAGS = -fobjc-arc
+WePay_FILES = Tweak.x
+WePay_CFLAGS = -fobjc-arc
 
 include $(THEOS_MAKE_PATH)/tweak.mk
