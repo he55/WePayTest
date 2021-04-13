@@ -1,0 +1,9 @@
+Package: com.he55.filzatweak
+Name: FilzaTweak
+Version: 1.0
+Architecture: iphoneos-arm
+Description: FilzaTweak
+Maintainer: he55
+Author: he55
+Section: Tweaks
+Depends: mobilesubstrate
