@@ -10,7 +10,9 @@ include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = WePay
 
-WePay_FILES = Tweak.x
+WePay_FILES = $(wildcard src/fmdb/*.m src/*.m src/*.x)
 WePay_CFLAGS = -fobjc-arc
+WePay_LIBRARIES = sqlite3
+WePay_FRAMEWORKS = UIKit
 
 include $(THEOS_MAKE_PATH)/tweak.mk
