@@ -186,13 +186,6 @@ void saveOrderTaskLog(NSDictionary *orderTask) {
 - (void)viewDidAppear:(BOOL)animated {
     %orig;
 
-    if (!self.navigationItem.leftBarButtonItem) {
-        UIBarButtonItem *barButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"二维码收款" style:UIBarButtonItemStylePlain target:self action:@selector(handleOpenFace2FaceReceiveMoney)];
-        [barButtonItem setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor labelColor]} forState:UIControlStateNormal];
-        [barButtonItem setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor labelColor]} forState:UIControlStateHighlighted];
-        self.navigationItem.leftBarButtonItem = barButtonItem;
-    }
-
     if (!s_wcPayFacingReceiveContorlLogic) {
         [%c(WCUIAlertView) showAlertWithTitle:@"WePay" message:@"WePay 需要打开二维码收款" btnTitle:@"打开二维码收款" target:self sel:@selector(handleOpenFace2FaceReceiveMoney)];
     }
