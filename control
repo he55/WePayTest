@@ -1,8 +1,8 @@
-Package: com.he55.filzatweak
-Name: FilzaTweak
+Package: com.he55.wepay
+Name: WePay
 Version: 1.0
 Architecture: iphoneos-arm
-Description: FilzaTweak
+Description: WePay
 Maintainer: he55
 Author: he55
 Section: Tweaks
