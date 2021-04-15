@@ -6,7 +6,6 @@ static NSString * const WePayServiceURL = @"http://192.168.0.103:5000";
 
 static WCPayFacingReceiveContorlLogic *s_wcPayFacingReceiveContorlLogic;
 static int s_tweakMode;
-static NSString *s_lastFixedAmountQRCode;
 static BOOL s_isMakeQRCodeFlag;
 
 static NSMutableArray<NSMutableDictionary *> *s_orderTasks;
@@ -118,11 +117,11 @@ void saveOrderTaskLog(NSDictionary *orderTask) {
         return;
     }
 
+    static NSString *s_lastFixedAmountQRCode;
     if (![self onError:arg2] && ![s_lastFixedAmountQRCode isEqualToString:arg1.m_nsFixedAmountQRCode]) {
         s_lastFixedAmountQRCode = arg1.m_nsFixedAmountQRCode;
 
         if (s_tweakMode == 1) {
-            s_tweakMode = 0;
             WCPayControlData *m_data = [self valueForKey:@"m_data"];
             m_data.m_nsFixedAmountReceiveMoneyQRCode = arg1.m_nsFixedAmountQRCode;
             m_data.fixed_qrcode_level = arg1.qrcode_level;
@@ -134,7 +133,6 @@ void saveOrderTaskLog(NSDictionary *orderTask) {
                 [(WCPayFacingReceiveQRCodeViewController *)viewController refreshViewWithData:m_data];
             }
         } else if (s_tweakMode == 2) {
-            s_tweakMode = 0;
             s_orderTask[@"orderCode"] = s_lastFixedAmountQRCode;
             saveOrderTaskLog(s_orderTask);
             postOrderTask(s_orderTask);
@@ -175,6 +173,17 @@ void saveOrderTaskLog(NSDictionary *orderTask) {
     s_tweakMode = 1;
     NSString *amount = [NSString stringWithFormat:@"%d", arc4random_uniform(100)];
     [s_wcPayFacingReceiveContorlLogic WCPayFacingReceiveFixedAmountViewControllerNext:amount Description:@"我是备注"];
+}
+
+%end
+
+
+// 二维码收款 > 设置金额
+%hook WCPayFacingReceiveFixedAmountViewController
+
+- (void)onNext {
+    s_tweakMode = 0;
+    %orig;
 }
 
 %end
