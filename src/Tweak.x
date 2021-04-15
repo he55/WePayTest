@@ -116,30 +116,30 @@ void saveOrderTaskLog(NSDictionary *orderTask) {
     if (s_tweakMode == 0) {
         %orig;
         return;
-    } else if ([self onError:arg2] || [s_lastFixedAmountQRCode isEqualToString:arg1.m_nsFixedAmountQRCode]) {
-        return;
     }
 
-    s_lastFixedAmountQRCode = arg1.m_nsFixedAmountQRCode;
+    if (![self onError:arg2] && ![s_lastFixedAmountQRCode isEqualToString:arg1.m_nsFixedAmountQRCode]) {
+        s_lastFixedAmountQRCode = arg1.m_nsFixedAmountQRCode;
 
-    if (s_tweakMode == 1) {
-        s_tweakMode = 0;
-        WCPayControlData *m_data = [self valueForKey:@"m_data"];
-        m_data.m_nsFixedAmountReceiveMoneyQRCode = arg1.m_nsFixedAmountQRCode;
-        m_data.fixed_qrcode_level = arg1.qrcode_level;
-        m_data.m_enWCPayFacingReceiveMoneyScene = 2;
+        if (s_tweakMode == 1) {
+            s_tweakMode = 0;
+            WCPayControlData *m_data = [self valueForKey:@"m_data"];
+            m_data.m_nsFixedAmountReceiveMoneyQRCode = arg1.m_nsFixedAmountQRCode;
+            m_data.fixed_qrcode_level = arg1.qrcode_level;
+            m_data.m_enWCPayFacingReceiveMoneyScene = 2;
 
-        [self stopLoading];
-        id viewController = [[%c(CAppViewControllerManager) getAppViewControllerManager] getTopViewController];
-        if ([viewController isKindOfClass:%c(WCPayFacingReceiveQRCodeViewController)]) {
-            [(WCPayFacingReceiveQRCodeViewController *)viewController refreshViewWithData:m_data];
+            [self stopLoading];
+            id viewController = [[%c(CAppViewControllerManager) getAppViewControllerManager] getTopViewController];
+            if ([viewController isKindOfClass:%c(WCPayFacingReceiveQRCodeViewController)]) {
+                [(WCPayFacingReceiveQRCodeViewController *)viewController refreshViewWithData:m_data];
+            }
+        } else if (s_tweakMode == 2) {
+            s_tweakMode = 0;
+            s_orderTask[@"orderCode"] = s_lastFixedAmountQRCode;
+            saveOrderTaskLog(s_orderTask);
+            postOrderTask(s_orderTask);
+            [self stopLoading];
         }
-    } else if (s_tweakMode == 2) {
-        s_tweakMode = 0;
-        s_orderTask[@"orderCode"] = s_lastFixedAmountQRCode;
-        saveOrderTaskLog(s_orderTask);
-        postOrderTask(s_orderTask);
-        [self stopLoading];
     }
 }
 
