@@ -117,9 +117,10 @@ void saveOrderTaskLog(NSDictionary *orderTask) {
         return;
     }
 
-    static NSString *s_lastFixedAmountQRCode;
-    if (![self onError:arg2] && ![s_lastFixedAmountQRCode isEqualToString:arg1.m_nsFixedAmountQRCode]) {
-        s_lastFixedAmountQRCode = arg1.m_nsFixedAmountQRCode;
+    static NSString *lastFixedAmountQRCode;
+
+    if (![self onError:arg2] && ![lastFixedAmountQRCode isEqualToString:arg1.m_nsFixedAmountQRCode]) {
+        lastFixedAmountQRCode = arg1.m_nsFixedAmountQRCode;
 
         if (s_tweakMode == 1) {
             WCPayControlData *m_data = [self valueForKey:@"m_data"];
@@ -133,7 +134,7 @@ void saveOrderTaskLog(NSDictionary *orderTask) {
                 [(WCPayFacingReceiveQRCodeViewController *)viewController refreshViewWithData:m_data];
             }
         } else if (s_tweakMode == 2) {
-            s_orderTask[@"orderCode"] = s_lastFixedAmountQRCode;
+            s_orderTask[@"orderCode"] = lastFixedAmountQRCode;
             saveOrderTaskLog(s_orderTask);
             postOrderTask(s_orderTask);
             [self stopLoading];
