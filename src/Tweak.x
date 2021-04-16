@@ -104,9 +104,7 @@ void saveOrderTaskLog(NSDictionary *orderTask) {
 %hook WCPayFacingReceiveContorlLogic
 
 - (id)initWithData:(id)arg1 {
-    if (!s_wcPayFacingReceiveContorlLogic) {
-        s_wcPayFacingReceiveContorlLogic = self;
-    }
+    s_wcPayFacingReceiveContorlLogic = self;
     return %orig;
 }
 
