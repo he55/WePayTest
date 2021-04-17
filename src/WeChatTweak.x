@@ -96,25 +96,30 @@ void WPPostMessage(void) {
     }
 
     static NSString *lastFixedAmountQRCode;
-
     if (![self onError:arg2] && ![lastFixedAmountQRCode isEqualToString:arg1.m_nsFixedAmountQRCode]) {
         lastFixedAmountQRCode = arg1.m_nsFixedAmountQRCode;
+        WCPayControlData *m_data = [self valueForKey:@"m_data"];
+        m_data.m_nsFixedAmountReceiveMoneyQRCode = arg1.m_nsFixedAmountQRCode;
+        m_data.fixed_qrcode_level = arg1.qrcode_level;
+        m_data.m_enWCPayFacingReceiveMoneyScene = 2;
+
+        [self stopLoading];
 
         if (WPMode == 1) {
-            WCPayControlData *m_data = [self valueForKey:@"m_data"];
-            m_data.m_nsFixedAmountReceiveMoneyQRCode = arg1.m_nsFixedAmountQRCode;
-            m_data.fixed_qrcode_level = arg1.qrcode_level;
-            m_data.m_enWCPayFacingReceiveMoneyScene = 2;
-
-            [self stopLoading];
             id viewController = [[%c(CAppViewControllerManager) getAppViewControllerManager] getTopViewController];
             if ([viewController isKindOfClass:%c(WCPayFacingReceiveQRCodeViewController)]) {
                 [(WCPayFacingReceiveQRCodeViewController *)viewController refreshViewWithData:m_data];
             }
         } else if (WPMode == 2) {
-            // s_orderTask[@"orderCode"] = lastFixedAmountQRCode;
-            // WPPostOrder(s_orderTask);
-            [self stopLoading];
+            for (int i = 0; i < [WPOrders count]; i++) {
+                NSMutableDictionary *order = WPOrders[i];
+                if ([order[@"orderId"] isEqualToString:m_data.m_nsFixedAmountReceiveMoneyDesc]) {
+                    order[@"orderCode"] = lastFixedAmountQRCode;
+                    [WPOrders removeObject:order];
+                    WPPostOrder(order);
+                    break;
+                }
+            }
         }
     }
 }
