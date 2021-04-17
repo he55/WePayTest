@@ -2,8 +2,7 @@
 #import "WPConfig.h"
 #import "HWZWeChatMessage.h"
 
-NSString * const WPServiceURL = @"http://192.168.0.103:5000";
-
+NSString *WPServiceURL;
 static NSMutableArray *WPOrders;
 static int WPMode;
 static WCPayFacingReceiveContorlLogic *WCPayFacingReceive;
@@ -187,8 +186,9 @@ void WPPostMessage(void) {
 
 %new
 - (void)handleOpenFace2FaceReceiveMoney {
-    [self openFace2FaceReceiveMoney];
+    WPServiceURL = [WPConfig sharedConfig].serviceURL;
     WPOrders = [NSMutableArray array];
+    [self openFace2FaceReceiveMoney];
 
     [NSTimer scheduledTimerWithTimeInterval:2.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
         // WPPostOrder(nil);

@@ -1,19 +1,21 @@
 #import "WeChat.h"
 #import "WPConfig.h"
 
+extern NSString *WPServiceURL;
+
 %hook NewSettingViewController
 
 - (void)reloadTableData {
     %orig;
 
     WCTableViewSectionManager *section = [%c(WCTableViewSectionManager) sectionInfoDefaut];
-    BOOL serviceEnable = [WPConfig sharedConfig].serviceEnable;
 
+    BOOL serviceEnable = [WPConfig sharedConfig].serviceEnable;
     [section addCell:[%c(WCTableViewCellManager) switchCellForSel:@selector(switchServiceEnable:) target:self title:@"WePay" on:serviceEnable]];
 
     WCTableViewCellManager *cell = serviceEnable ?
-        [%c(WCTableViewCellManager) normalCellForSel:@selector(settingServiceURL) target:self title:@"地址" rightValue:[WPConfig sharedConfig].serviceURL] :
-        [%c(WCTableViewNormalCellManager) normalCellForTitle:@"地址" rightValue:[WPConfig sharedConfig].serviceURL];
+        [%c(WCTableViewCellManager) normalCellForSel:@selector(settingServiceURL) target:self title:@"地址" rightValue:WPServiceURL] :
+        [%c(WCTableViewNormalCellManager) normalCellForTitle:@"地址" rightValue:WPServiceURL];
     [section addCell:cell];
 
     [section addCell:[%c(WCTableViewCellManager) normalCellForSel:@selector(showGitHub) target:self title:@"GitHub" rightValue:@"Star ★"]];
@@ -35,12 +37,13 @@
 
     [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
         textField.placeholder = @"请输入订单服务地址";
-        textField.text = [WPConfig sharedConfig].serviceURL;
+        textField.text = WPServiceURL;
         textField.keyboardType = UIKeyboardTypeURL;
     }];
 
     UIAlertAction *okAlertAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-        [WPConfig sharedConfig].serviceURL = alertController.textFields[0].text;
+        WPServiceURL = alertController.textFields[0].text;
+        [WPConfig sharedConfig].serviceURL = WPServiceURL;
         [self reloadTableData];
     }];
 
