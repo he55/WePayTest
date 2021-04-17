@@ -114,8 +114,8 @@ void WPPostMessage(void) {
                 [(WCPayFacingReceiveQRCodeViewController *)viewController refreshViewWithData:m_data];
             }
         } else if (WPMode == 2) {
-            s_orderTask[@"orderCode"] = lastFixedAmountQRCode;
-            WPPostOrder(s_orderTask);
+            // s_orderTask[@"orderCode"] = lastFixedAmountQRCode;
+            // WPPostOrder(s_orderTask);
             [self stopLoading];
         }
     }
