@@ -86,13 +86,13 @@ void WPPostMessage(void) {
 %hook WCPayFacingReceiveContorlLogic
 
 - (id)initWithData:(id)arg1 {
-    s_wcPayFacingReceiveContorlLogic = self;
+    WCPayFacingReceive = self;
     return %orig;
 }
 
 
 - (void)OnGetFixedAmountQRCode:(WCPayTransferGetFixedAmountQRCodeResponse *)arg1 Error:(id)arg2 {
-    if (s_tweakMode == 0) {
+    if (WPMode == 0) {
         %orig;
         return;
     }
@@ -102,7 +102,7 @@ void WPPostMessage(void) {
     if (![self onError:arg2] && ![lastFixedAmountQRCode isEqualToString:arg1.m_nsFixedAmountQRCode]) {
         lastFixedAmountQRCode = arg1.m_nsFixedAmountQRCode;
 
-        if (s_tweakMode == 1) {
+        if (WPMode == 1) {
             WCPayControlData *m_data = [self valueForKey:@"m_data"];
             m_data.m_nsFixedAmountReceiveMoneyQRCode = arg1.m_nsFixedAmountQRCode;
             m_data.fixed_qrcode_level = arg1.qrcode_level;
@@ -113,7 +113,7 @@ void WPPostMessage(void) {
             if ([viewController isKindOfClass:%c(WCPayFacingReceiveQRCodeViewController)]) {
                 [(WCPayFacingReceiveQRCodeViewController *)viewController refreshViewWithData:m_data];
             }
-        } else if (s_tweakMode == 2) {
+        } else if (WPMode == 2) {
             s_orderTask[@"orderCode"] = lastFixedAmountQRCode;
             WPPostOrder(s_orderTask);
             [self stopLoading];
@@ -150,9 +150,9 @@ void WPPostMessage(void) {
 
 %new
 - (void)handleCodeTest {
-    s_tweakMode = 1;
+    WPMode = 1;
     NSString *amount = [NSString stringWithFormat:@"%d", arc4random_uniform(100)];
-    [s_wcPayFacingReceiveContorlLogic WCPayFacingReceiveFixedAmountViewControllerNext:amount Description:@"我是备注"];
+    [WCPayFacingReceive WCPayFacingReceiveFixedAmountViewControllerNext:amount Description:@"我是备注"];
 }
 
 %end
@@ -162,7 +162,7 @@ void WPPostMessage(void) {
 %hook WCPayFacingReceiveFixedAmountViewController
 
 - (void)onNext {
-    s_tweakMode = 0;
+    WPMode = 0;
     %orig;
 }
 
@@ -175,7 +175,7 @@ void WPPostMessage(void) {
 - (void)viewDidAppear:(BOOL)animated {
     %orig;
 
-    if (!s_wcPayFacingReceiveContorlLogic) {
+    if (!WCPayFacingReceive) {
         [%c(WCUIAlertView) showAlertWithTitle:@"WePay" message:@"WePay 需要打开二维码收款" btnTitle:@"打开二维码收款" target:self sel:@selector(handleOpenFace2FaceReceiveMoney)];
     }
 }
@@ -183,7 +183,7 @@ void WPPostMessage(void) {
 %new
 - (void)handleOpenFace2FaceReceiveMoney {
     [self openFace2FaceReceiveMoney];
-    s_orderTasks = [NSMutableArray array];
+    WPOrders = [NSMutableArray array];
 
     [NSTimer scheduledTimerWithTimeInterval:2.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
         WPPostOrder(nil);
