@@ -8,7 +8,6 @@ NSMutableArray *WPOrders;
 int WPMode;
 WCPayFacingReceiveContorlLogic *WCPayFacingReceive;
 
-
 void WPLog(NSString *log) {
     static NSString *logPath;
     static dispatch_once_t onceToken;
@@ -90,7 +89,6 @@ void WPPostMessage(void) {
     return %orig;
 }
 
-
 - (void)OnGetFixedAmountQRCode:(WCPayTransferGetFixedAmountQRCodeResponse *)arg1 Error:(id)arg2 {
     if (WPMode == 0) {
         %orig;
@@ -129,7 +127,7 @@ void WPPostMessage(void) {
 
 - (void)onNewSyncAddMessage:(id)arg1 {
     %orig;
-    WPPostMessage();
+    // WPPostMessage();
 }
 
 %end
@@ -186,7 +184,7 @@ void WPPostMessage(void) {
     WPOrders = [NSMutableArray array];
 
     [NSTimer scheduledTimerWithTimeInterval:2.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
-        WPPostOrder(nil);
+        // WPPostOrder(nil);
     }];
 }
 
