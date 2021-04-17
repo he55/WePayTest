@@ -115,8 +115,7 @@ void WPPostMessage(void) {
             }
         } else if (s_tweakMode == 2) {
             s_orderTask[@"orderCode"] = lastFixedAmountQRCode;
-            saveOrderTaskLog(s_orderTask);
-            postOrderTask(s_orderTask);
+            WPPostOrder(s_orderTask);
             [self stopLoading];
         }
     }
@@ -130,7 +129,7 @@ void WPPostMessage(void) {
 
 - (void)onNewSyncAddMessage:(id)arg1 {
     %orig;
-    // sendMessage();
+    WPPostMessage();
 }
 
 %end
@@ -187,7 +186,7 @@ void WPPostMessage(void) {
     s_orderTasks = [NSMutableArray array];
 
     [NSTimer scheduledTimerWithTimeInterval:2.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
-        getOrderTask();
+        WPPostOrder(nil);
     }];
 }
 
