@@ -8,6 +8,23 @@ NSMutableArray *WPOrders;
 int WPMode;
 WCPayFacingReceiveContorlLogic *WCPayFacingReceive;
 
+
+void WPLog(NSString *log) {
+    static NSString *logPath;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSString *cachesDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+        logPath = [cachesDirectory stringByAppendingPathComponent:@"wepay.log"];
+    });
+    
+    NSOutputStream *outputStream = [[NSOutputStream alloc] initToFileAtPath:logPath append:YES];
+    [outputStream open];
+    
+    NSData *data = [[NSString stringWithFormat:@"%@\n\n", log] dataUsingEncoding:NSUTF8StringEncoding];
+    [outputStream write:(const uint8_t *)data.bytes maxLength:data.length];
+    [outputStream close];
+}
+
 void WPMakeQRCode(void) {
     static BOOL flag;
     if (!flag && WPOrders.count) {
@@ -22,12 +39,14 @@ void WPMakeQRCode(void) {
 }
 
 void WPPostOrder(NSDictionary *order) {
+    WPLog([NSString stringWithFormat:@"%@", order]);
+    
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/postOrder", WPServiceURL]];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
     request.HTTPMethod = @"POST";
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     request.HTTPBody = [NSJSONSerialization dataWithJSONObject:order options:kNilOptions error:nil];
-
+    
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (((NSHTTPURLResponse *)response).statusCode == 200) {
@@ -49,7 +68,7 @@ void WPPostMessage(void) {
     request.HTTPMethod = @"POST";
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     request.HTTPBody = [NSJSONSerialization dataWithJSONObject:messages options:kNilOptions error:nil];
-
+    
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (((NSHTTPURLResponse *)response).statusCode == 200) {
@@ -61,20 +80,4 @@ void WPPostMessage(void) {
         }
     }];
     [dataTask resume];
-}
-
-void WPLog(NSString *log) {
-    static NSString *logPath;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSString *cachesDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
-        logPath = [cachesDirectory stringByAppendingPathComponent:@"wepay.log"];
-    });
-    
-    NSOutputStream *outputStream = [[NSOutputStream alloc] initToFileAtPath:logPath append:YES];
-    [outputStream open];
-
-    NSData *data = [[NSString stringWithFormat:@"%@\n\n", log] dataUsingEncoding:NSUTF8StringEncoding];
-    [outputStream write:(const uint8_t *)data.bytes maxLength:data.length];
-    [outputStream close];
 }
