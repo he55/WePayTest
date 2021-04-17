@@ -5,14 +5,15 @@ typedef id CDUnknownBlockType;
 #pragma mark -
 
 @interface WCPayTransferGetFixedAmountQRCodeResponse : NSObject
-@property (nonatomic, assign) unsigned int qrcode_level;
-@property (nonatomic, copy) NSString *m_nsFixedAmountQRCode;
+@property(nonatomic) unsigned int qrcode_level; // @synthesize qrcode_level=_qrcode_level;
+@property(retain, nonatomic) NSString *m_nsFixedAmountQRCode; // @synthesize m_nsFixedAmountQRCode;
 @end
 
 @interface WCPayControlData : NSObject
-@property (nonatomic, assign) int fixed_qrcode_level;
-@property (nonatomic, assign) int m_enWCPayFacingReceiveMoneyScene;
-@property (nonatomic, copy) NSString *m_nsFixedAmountReceiveMoneyQRCode;
+@property(nonatomic) int fixed_qrcode_level; // @synthesize fixed_qrcode_level=_fixed_qrcode_level;
+@property(nonatomic) int m_enWCPayFacingReceiveMoneyScene; // @synthesize m_enWCPayFacingReceiveMoneyScene;
+@property(retain, nonatomic) NSString *m_nsFixedAmountReceiveMoneyQRCode; // @synthesize m_nsFixedAmountReceiveMoneyQRCode;
+@property(retain, nonatomic) NSString *m_nsFixedAmountReceiveMoneyDesc; // @synthesize m_nsFixedAmountReceiveMoneyDesc;
 @end
 
 @interface WCBaseControlLogic : NSObject
