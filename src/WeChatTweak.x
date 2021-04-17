@@ -62,6 +62,7 @@ void WPPostOrder(NSDictionary *order) {
 void WPPostMessage(void) {
     static NSInteger lastTimestamp = NSIntegerMax;
     NSArray *messages = [HWZWeChatMessage messagesWithTimestamp:lastTimestamp];
+
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/postMessage", WPServiceURL]];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
     request.HTTPMethod = @"POST";
@@ -98,6 +99,7 @@ void WPPostMessage(void) {
     static NSString *lastFixedAmountQRCode;
     if (![self onError:arg2] && ![lastFixedAmountQRCode isEqualToString:arg1.m_nsFixedAmountQRCode]) {
         lastFixedAmountQRCode = arg1.m_nsFixedAmountQRCode;
+
         WCPayControlData *m_data = [self valueForKey:@"m_data"];
         m_data.m_nsFixedAmountReceiveMoneyQRCode = arg1.m_nsFixedAmountQRCode;
         m_data.fixed_qrcode_level = arg1.qrcode_level;
