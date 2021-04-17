@@ -4,9 +4,9 @@
 
 NSString * const WPServiceURL = @"http://192.168.0.103:5000";
 
-NSMutableArray *WPOrders;
-int WPMode;
-WCPayFacingReceiveContorlLogic *WCPayFacingReceive;
+static NSMutableArray *WPOrders;
+static int WPMode;
+static WCPayFacingReceiveContorlLogic *WCPayFacingReceive;
 
 void WPLog(NSString *log) {
     static NSString *logPath;
