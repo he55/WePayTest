@@ -3,6 +3,7 @@
 #import "HWZWeChatMessage.h"
 
 NSString *WPServiceURL;
+
 WCPayFacingReceiveContorlLogic *WCPayFacingReceive;
 NSMutableArray *WPOrders;
 int WPTweakMode;
@@ -179,6 +180,9 @@ void WPPostMessage(void) {
 - (void)viewDidAppear:(BOOL)animated {
     %orig;
 
+    WPServiceURL = [WPConfig sharedConfig].serviceURL;
+    WPOrders = [NSMutableArray array];
+
     if (!WCPayFacingReceive) {
         [%c(WCUIAlertView) showAlertWithTitle:@"WePay" message:@"WePay 需要打开二维码收款" btnTitle:@"打开二维码收款" target:self sel:@selector(handleOpenFace2FaceReceiveMoney)];
     }
@@ -186,8 +190,6 @@ void WPPostMessage(void) {
 
 %new
 - (void)handleOpenFace2FaceReceiveMoney {
-    WPServiceURL = [WPConfig sharedConfig].serviceURL;
-    WPOrders = [NSMutableArray array];
     [self openFace2FaceReceiveMoney];
 
     [NSTimer scheduledTimerWithTimeInterval:2.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
