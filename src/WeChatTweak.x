@@ -90,7 +90,7 @@ void WPPostMessage(void) {
 }
 
 - (void)OnGetFixedAmountQRCode:(WCPayTransferGetFixedAmountQRCodeResponse *)arg1 Error:(id)arg2 {
-    if (WPMode == 0) {
+    if (WPTweakMode == 0) {
         %orig;
         return;
     }
@@ -106,12 +106,12 @@ void WPPostMessage(void) {
 
         [self stopLoading];
 
-        if (WPMode == 1) {
+        if (WPTweakMode == 1) {
             id viewController = [[%c(CAppViewControllerManager) getAppViewControllerManager] getTopViewController];
             if ([viewController isKindOfClass:%c(WCPayFacingReceiveQRCodeViewController)]) {
                 [(WCPayFacingReceiveQRCodeViewController *)viewController refreshViewWithData:m_data];
             }
-        } else if (WPMode == 2) {
+        } else if (WPTweakMode == 2) {
             for (int i = 0; i < [WPOrders count]; i++) {
                 NSMutableDictionary *order = WPOrders[i];
                 if ([order[@"orderId"] isEqualToString:m_data.m_nsFixedAmountReceiveMoneyDesc]) {
@@ -154,7 +154,7 @@ void WPPostMessage(void) {
 
 %new
 - (void)handleCodeTest {
-    WPMode = 1;
+    WPTweakMode = 1;
     NSString *amount = [NSString stringWithFormat:@"%d", arc4random_uniform(100)];
     [WCPayFacingReceive WCPayFacingReceiveFixedAmountViewControllerNext:amount Description:@"我是备注"];
 }
@@ -166,7 +166,7 @@ void WPPostMessage(void) {
 %hook WCPayFacingReceiveFixedAmountViewController
 
 - (void)onNext {
-    WPMode = 0;
+    WPTweakMode = 0;
     %orig;
 }
 
