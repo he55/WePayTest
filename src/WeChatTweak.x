@@ -3,10 +3,10 @@
 #import "HWZWeChatMessage.h"
 
 NSString *WPServiceURL;
-static WCPayFacingReceiveContorlLogic *WCPayFacingReceive;
-static NSMutableArray *WPOrders;
-static int WPTweakMode;
-static BOOL WPMakeFlag;
+WCPayFacingReceiveContorlLogic *WCPayFacingReceive;
+NSMutableArray *WPOrders;
+int WPTweakMode;
+int WPMakeFlag;
 
 void WPLog(NSString *log) {
     static NSString *logPath;
@@ -26,12 +26,12 @@ void WPLog(NSString *log) {
 
 void WPMakeQRCode(void) {
     if (!WPMakeFlag && [WPOrders count]) {
-        WPMakeFlag = YES;
+        WPMakeFlag = 1;
         dispatch_async(dispatch_get_main_queue(), ^{
             WPTweakMode = 2;
             NSDictionary *order = WPOrders[0];
             [WCPayFacingReceive WCPayFacingReceiveFixedAmountViewControllerNext:order[@"orderAmount"] Description:order[@"orderId"]];
-            WPMakeFlag = NO;
+            WPMakeFlag = 0;
         });
     }
 }
