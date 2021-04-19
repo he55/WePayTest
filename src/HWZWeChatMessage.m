@@ -12,6 +12,34 @@
 
 @implementation HWZWeChatMessage
 
++ (NSString *)tableNameWithDbPath:(NSString *)dbPath {
+    FMDatabase *db = [FMDatabase databaseWithPath:dbPath];
+    if (![db open]) {
+        return nil;
+    }
+    
+    FMResultSet *resultSet = [db executeQuery:@"SELECT name FROM sqlite_master WHERE type = 'table' AND name LIKE 'chat/_%' ESCAPE '/' ORDER BY name"];
+    if (!resultSet) {
+        return nil;
+    }
+    
+    NSMutableArray *chatTableNames = [NSMutableArray array];
+    while ([resultSet next]) {
+        [chatTableNames addObject:[resultSet stringForColumnIndex:0]];
+    }
+    
+    for (NSString *chatTableName in chatTableNames) {
+        resultSet = [db executeQuery:[NSString stringWithFormat:@"SELECT Message FROM %@ WHERE Des = 0 AND Type = 1 ORDER BY CreateTime DESC LIMIT 1", chatTableName]];
+        if ([resultSet next] && [[resultSet stringForColumnIndex:0] isEqualToString:@"123qwe"]) {
+            [db close];
+            return chatTableName;
+        }
+    }
+    
+    [db close];
+    return nil;
+}
+
 + (NSDictionary *)messageWithMessageId:(NSString *)messageId {
     FMDatabase *db = [FMDatabase databaseWithPath:HWZDbPath];
     if (![db open]) {
