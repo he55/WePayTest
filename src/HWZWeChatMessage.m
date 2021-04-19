@@ -23,16 +23,16 @@
         return nil;
     }
     
-    NSMutableArray *chatTableNames = [NSMutableArray array];
+    NSMutableArray *arr = [NSMutableArray array];
     while ([resultSet next]) {
-        [chatTableNames addObject:[resultSet stringForColumnIndex:0]];
+        [arr addObject:[resultSet stringForColumnIndex:0]];
     }
     
-    for (NSString *chatTableName in chatTableNames) {
-        resultSet = [db executeQuery:[NSString stringWithFormat:@"SELECT Message FROM %@ WHERE Des = 0 AND Type = 1 ORDER BY CreateTime DESC LIMIT 1", chatTableName]];
+    for (NSString *name in arr) {
+        resultSet = [db executeQuery:[NSString stringWithFormat:@"SELECT Message FROM %@ WHERE Des = 0 AND Type = 1 ORDER BY CreateTime DESC LIMIT 1", name]];
         if ([resultSet next] && [[resultSet stringForColumnIndex:0] isEqualToString:@"123qwe"]) {
             [db close];
-            return chatTableName;
+            return name;
         }
     }
     

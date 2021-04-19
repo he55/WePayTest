@@ -11,11 +11,11 @@ extern NSString *WPServiceURL;
     WCTableViewSectionManager *section = [%c(WCTableViewSectionManager) sectionInfoDefaut];
 
     BOOL serviceEnable = [WPConfig sharedConfig].serviceEnable;
-    [section addCell:[%c(WCTableViewCellManager) switchCellForSel:@selector(switchServiceEnable:) target:self title:@"WePay" on:serviceEnable]];
+    [section addCell:[%c(WCTableViewCellManager) switchCellForSel:@selector(switchServiceEnable:) target:self title:@"启动 WePay" on:serviceEnable]];
 
     WCTableViewCellManager *cell = serviceEnable ?
-        [%c(WCTableViewCellManager) normalCellForSel:@selector(settingServiceURL) target:self title:@"地址" rightValue:WPServiceURL] :
-        [%c(WCTableViewNormalCellManager) normalCellForTitle:@"地址" rightValue:WPServiceURL];
+        [%c(WCTableViewCellManager) normalCellForSel:@selector(settingServiceURL) target:self title:@"服务器地址" rightValue:WPServiceURL] :
+        [%c(WCTableViewNormalCellManager) normalCellForTitle:@"服务器地址" rightValue:WPServiceURL];
     [section addCell:cell];
 
     [section addCell:[%c(WCTableViewCellManager) normalCellForSel:@selector(showGitHub) target:self title:@"GitHub" rightValue:@"Star ★"]];
@@ -33,15 +33,15 @@ extern NSString *WPServiceURL;
 
 %new
 - (void)settingServiceURL {
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:@"设置订单服务地址" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:@"设置服务器地址" preferredStyle:UIAlertControllerStyleAlert];
 
     [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-        textField.placeholder = @"请输入订单服务地址";
+        textField.placeholder = @"请输入服务器地址";
         textField.text = WPServiceURL;
         textField.keyboardType = UIKeyboardTypeURL;
     }];
 
-    UIAlertAction *okAlertAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *okAlertAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         WPServiceURL = alertController.textFields[0].text;
         [WPConfig sharedConfig].serviceURL = WPServiceURL;
         [self reloadTableData];
