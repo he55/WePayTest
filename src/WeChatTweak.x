@@ -5,7 +5,8 @@
 NSString *WPServiceURL;
 static WCPayFacingReceiveContorlLogic *WCPayFacingReceive;
 static NSMutableArray *WPOrders;
-static int WPMode;
+static int WPTweakMode;
+static BOOL WPMakeFlag;
 
 void WPLog(NSString *log) {
     static NSString *logPath;
@@ -24,14 +25,13 @@ void WPLog(NSString *log) {
 }
 
 void WPMakeQRCode(void) {
-    static BOOL flag;
-    if (!flag && WPOrders.count) {
-        flag = YES;
+    if (!WPMakeFlag && [WPOrders count]) {
+        WPMakeFlag = YES;
         dispatch_async(dispatch_get_main_queue(), ^{
-            WPMode = 2;
+            WPTweakMode = 2;
             NSDictionary *order = WPOrders[0];
             [WCPayFacingReceive WCPayFacingReceiveFixedAmountViewControllerNext:order[@"orderAmount"] Description:order[@"orderId"]];
-            flag = NO;
+            WPMakeFlag = NO;
         });
     }
 }
@@ -47,7 +47,7 @@ void WPPostOrder(NSDictionary *order) {
 
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        if (((NSHTTPURLResponse *)response).statusCode == 200) {
+        if (!error && ((NSHTTPURLResponse *)response).statusCode == 200) {
             id obj = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
             if ([obj isKindOfClass:[NSArray class]] && [obj count]) {
                 [WPOrders addObjectsFromArray:obj];
@@ -70,7 +70,7 @@ void WPPostMessage(void) {
 
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        if (((NSHTTPURLResponse *)response).statusCode == 200) {
+        if (!error && ((NSHTTPURLResponse *)response).statusCode == 200) {
             NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
             NSInteger timestamp = [content integerValue];
             if (timestamp) {
