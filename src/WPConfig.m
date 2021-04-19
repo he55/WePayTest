@@ -8,8 +8,8 @@
 
 #import "WPConfig.h"
 
-static NSString * const kServiceEnableKey = @"ServiceEnable";
-static NSString * const kServiceURLKey = @"ServiceURL";
+static NSString * const kWPServiceEnableKey = @"WPServiceEnable";
+static NSString * const kWPServiceURLKey = @"WPServiceURL";
 
 @implementation WPConfig {
     NSUserDefaults *_userDefaults;
@@ -28,8 +28,8 @@ static NSString * const kServiceURLKey = @"ServiceURL";
 - (instancetype)init {
     if (self = [super init]) {
         _userDefaults = [NSUserDefaults standardUserDefaults];
-        _serviceEnable = [_userDefaults boolForKey:kServiceEnableKey];
-        _serviceURL = [_userDefaults stringForKey:kServiceURLKey];
+        _serviceEnable = [_userDefaults boolForKey:kWPServiceEnableKey];
+        _serviceURL = [_userDefaults stringForKey:kWPServiceURLKey];
     }
     return self;
 }
@@ -37,14 +37,14 @@ static NSString * const kServiceURLKey = @"ServiceURL";
 
 - (void)setServiceEnable:(BOOL)serviceEnable {
     _serviceEnable = serviceEnable;
-    [_userDefaults setBool:serviceEnable forKey:kServiceEnableKey];
+    [_userDefaults setBool:serviceEnable forKey:kWPServiceEnableKey];
     [_userDefaults synchronize];
 }
 
 
 - (void)setServiceURL:(NSString *)serviceURL {
     _serviceURL = serviceURL;
-    [_userDefaults setObject:serviceURL forKey:kServiceURLKey];
+    [_userDefaults setObject:serviceURL forKey:kWPServiceURLKey];
     [_userDefaults synchronize];
 }
 
