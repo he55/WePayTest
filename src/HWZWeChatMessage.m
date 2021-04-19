@@ -12,48 +12,39 @@
 
 @implementation HWZWeChatMessage
 
-+ (NSDictionary<NSString *, id> *)messageWithMessageId:(NSString *)messageId {
++ (NSDictionary *)messageWithMessageId:(NSString *)messageId {
     FMDatabase *db = [FMDatabase databaseWithPath:HWZDbPath];
     if (![db open]) {
         return nil;
     }
-
-    static NSString * sql = @"SELECT CreateTime, MesSvrID, Message FROM %@ WHERE MesSvrID = ?";
-    FMResultSet *resultSet = [db executeQuery:[NSString stringWithFormat:sql, HWZTableName], messageId];
-
-    if (!resultSet) {
-        return nil;
-    }
-
+    
+    FMResultSet *resultSet = [db executeQuery:[NSString stringWithFormat:@"SELECT CreateTime, MesSvrID, Message FROM %@ WHERE MesSvrID = ?", HWZTableName], messageId];
     if (![resultSet next]) {
         return nil;
     }
-
+    
     NSDictionary *message = @{
         @"createTime": @([resultSet intForColumnIndex:0]),
         @"messageId": [resultSet stringForColumnIndex:1],
         @"message": [resultSet stringForColumnIndex:2]
     };
-
+    
     [db close];
-
     return message;
 }
 
 
-+ (NSArray<NSDictionary<NSString *, id> *> *)messagesWithTimestamp:(NSInteger)timestamp {
++ (NSArray *)messagesWithTimestamp:(NSInteger)timestamp {
     FMDatabase *db = [FMDatabase databaseWithPath:HWZDbPath];
     if (![db open]) {
         return nil;
     }
-
-    static NSString * sql = @"SELECT CreateTime, MesSvrID, Message FROM %@ WHERE Des = 1 AND Type = 49 AND CreateTime > ? AND Message LIKE '%%<![CDATA[we/_%%' ESCAPE '/' ORDER BY CreateTime";
-    FMResultSet *resultSet = [db executeQuery:[NSString stringWithFormat:sql, HWZTableName], @(timestamp)];
-
+    
+    FMResultSet *resultSet = [db executeQuery:[NSString stringWithFormat:@"SELECT CreateTime, MesSvrID, Message FROM %@ WHERE Des = 1 AND Type = 49 AND CreateTime > ? AND Message LIKE '%%<![CDATA[we/_%%' ESCAPE '/' ORDER BY CreateTime", HWZTableName], @(timestamp)];
     if (!resultSet) {
         return nil;
     }
-
+    
     NSMutableArray *messages = [NSMutableArray array];
     while ([resultSet next]) {
         NSDictionary *message = @{
@@ -63,9 +54,8 @@
         };
         [messages addObject:message];
     }
-
+    
     [db close];
-
     return messages;
 }
 
