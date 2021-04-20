@@ -1,6 +1,6 @@
 #import "WeChat.h"
 #import "WPConfig.h"
-#import "HWZWeChatMessage.h"
+#import "WPChatMessage.h"
 
 NSString *WPServiceURL;
 
@@ -61,7 +61,8 @@ void WPPostOrder(NSDictionary *order) {
 
 void WPPostMessage(void) {
     static NSInteger lastTimestamp = NSIntegerMax;
-    NSArray *messages = [HWZWeChatMessage messagesWithTimestamp:lastTimestamp];
+    WPChatMessage *chatMessage = [[WPChatMessage alloc] initWithDbPath:@""];
+    NSArray *messages = [chatMessage messagesWithTimestamp:lastTimestamp];
 
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/postMessage", WPServiceURL]];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
