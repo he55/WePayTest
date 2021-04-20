@@ -157,7 +157,7 @@ void WPPostMessage(void) {
 %new
 - (void)handleCodeTest {
     WPTweakMode = 1;
-    NSString *amount = [NSString stringWithFormat:@"%d", arc4random_uniform(100)];
+    NSString *amount = [NSString stringWithFormat:@"%d", arc4random_uniform(100) + 1];
     [WCPayFacingReceive WCPayFacingReceiveFixedAmountViewControllerNext:amount Description:@"我是备注"];
 }
 
