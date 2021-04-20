@@ -1,4 +1,4 @@
-Package: com.he55.wepay
+Package: com.he55.wepay-client
 Name: WePay Clients
 Version: 1.0
 Architecture: iphoneos-arm
