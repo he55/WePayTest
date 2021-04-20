@@ -1,15 +1,15 @@
 //
-//  WPWeChatMessage.m
+//  WPChatMessage.m
 //  WePay
 //
 //  Created by he55 on 5/19/20.
 //  Copyright © 2020 he55. All rights reserved.
 //
 
-#import "WPWeChatMessage.h"
+#import "WPChatMessage.h"
 #import "fmdb/FMDB.h"
 
-@implementation WPWeChatMessage {
+@implementation WPChatMessage {
     NSString *_dbPath;
     NSString *_tableName;
 }

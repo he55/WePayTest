@@ -1,5 +1,5 @@
 //
-//  WPWeChatMessage.h
+//  WPChatMessage.h
 //  WePay
 //
 //  Created by he55 on 5/19/20.
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface WPWeChatMessage : NSObject
+@interface WPChatMessage : NSObject
 
 - (instancetype)initWithDbPath:(NSString *)dbPath;
 
