@@ -12,8 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface HWZWeChatMessage : NSObject
 
-+ (NSDictionary<NSString *, id> *)messageWithMessageId:(NSString *)messageId;
-+ (NSArray<NSDictionary<NSString *, id> *> *)messagesWithTimestamp:(NSInteger)timestamp;
+- (instancetype)initWithDbPath:(NSString *)dbPath;
+
+- (NSDictionary *)messageWithMessageId:(NSString *)messageId;
+- (NSArray *)messagesWithTimestamp:(NSInteger)timestamp;
 
 @end
 

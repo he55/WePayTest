@@ -7,13 +7,23 @@
 //
 
 #import "HWZWeChatMessage.h"
-#import "HWZSettings.h"
 #import "fmdb/FMDB.h"
 
-@implementation HWZWeChatMessage
+@implementation HWZWeChatMessage {
+    NSString *_dbPath;
+    NSString *_tableName;
+}
 
-+ (NSString *)tableNameWithDbPath:(NSString *)dbPath {
-    FMDatabase *db = [FMDatabase databaseWithPath:dbPath];
+- (instancetype)initWithDbPath:(NSString *)dbPath {
+    if (self = [super init]) {
+        _dbPath = dbPath;
+    }
+    return self;
+}
+
+
+- (NSString *)chatTableName {
+    FMDatabase *db = [FMDatabase databaseWithPath:_dbPath];
     if (![db open]) {
         return nil;
     }
@@ -40,13 +50,14 @@
     return nil;
 }
 
-+ (NSDictionary *)messageWithMessageId:(NSString *)messageId {
-    FMDatabase *db = [FMDatabase databaseWithPath:HWZDbPath];
+
+- (NSDictionary *)messageWithMessageId:(NSString *)messageId {
+    FMDatabase *db = [FMDatabase databaseWithPath:_dbPath];
     if (![db open]) {
         return nil;
     }
     
-    FMResultSet *resultSet = [db executeQuery:[NSString stringWithFormat:@"SELECT CreateTime, MesSvrID, Message FROM %@ WHERE MesSvrID = ?", HWZTableName], messageId];
+    FMResultSet *resultSet = [db executeQuery:[NSString stringWithFormat:@"SELECT CreateTime, MesSvrID, Message FROM %@ WHERE MesSvrID = ?", _tableName], messageId];
     if (![resultSet next]) {
         return nil;
     }
@@ -62,13 +73,13 @@
 }
 
 
-+ (NSArray *)messagesWithTimestamp:(NSInteger)timestamp {
-    FMDatabase *db = [FMDatabase databaseWithPath:HWZDbPath];
+- (NSArray *)messagesWithTimestamp:(NSInteger)timestamp {
+    FMDatabase *db = [FMDatabase databaseWithPath:_dbPath];
     if (![db open]) {
         return nil;
     }
     
-    FMResultSet *resultSet = [db executeQuery:[NSString stringWithFormat:@"SELECT CreateTime, MesSvrID, Message FROM %@ WHERE Des = 1 AND Type = 49 AND CreateTime > ? AND Message LIKE '%%<![CDATA[we/_%%' ESCAPE '/' ORDER BY CreateTime", HWZTableName], @(timestamp)];
+    FMResultSet *resultSet = [db executeQuery:[NSString stringWithFormat:@"SELECT CreateTime, MesSvrID, Message FROM %@ WHERE Des = 1 AND Type = 49 AND CreateTime > ? AND Message LIKE '%%<![CDATA[we/_%%' ESCAPE '/' ORDER BY CreateTime", _tableName], @(timestamp)];
     if (!resultSet) {
         return nil;
     }
