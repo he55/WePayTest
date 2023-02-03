@@ -2,7 +2,7 @@
 #import "WPConfig.h"
 #import "WPChatMessage.h"
 
-static NSString * const WePayServiceURL = @"http://192.168.0.103:5000";
+NSString *WePayServiceURL;
 
 static WCPayFacingReceiveContorlLogic *s_wcPayFacingReceiveContorlLogic;
 static int s_tweakMode;
@@ -83,11 +83,8 @@ static void postMessage(NSArray *messages) {
 
 
 static void sendMessage() {
-    // NSArray *messages = [HWZWeChatMessage messagesWithTimestamp:s_lastTimestamp];
-
-    static NSInteger lastTimestamp = NSIntegerMax;
     WPChatMessage *chatMessage = [[WPChatMessage alloc] initWithDbPath:@""];
-    NSArray *messages = [chatMessage messagesWithTimestamp:lastTimestamp];
+    NSArray *messages = [chatMessage messagesWithTimestamp:s_lastTimestamp];
     postMessage(messages);
 }
 
@@ -167,8 +164,8 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
     %orig;
 
     UIBarButtonItem *barButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"测试" style:UIBarButtonItemStylePlain target:self action:@selector(handleCodeTest)];
-    [barButtonItem setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor labelColor]} forState:UIControlStateNormal];
-    [barButtonItem setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor labelColor]} forState:UIControlStateHighlighted];
+    [barButtonItem setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor colorWithWhite:1.0 alpha:0.8]} forState:UIControlStateNormal];
+    [barButtonItem setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor colorWithWhite:1.0 alpha:0.8]} forState:UIControlStateHighlighted];
 
     self.navigationItem.rightBarButtonItem = barButtonItem;
 }
@@ -200,7 +197,9 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
 - (void)viewDidAppear:(BOOL)animated {
     %orig;
 
-    if (!s_wcPayFacingReceiveContorlLogic) {
+    WePayServiceURL = [WPConfig sharedConfig].serviceURL;
+
+    if ([WPConfig sharedConfig].serviceEnable && !s_wcPayFacingReceiveContorlLogic) {
         [%c(WCUIAlertView) showAlertWithTitle:@"WePay" message:@"WePay 需要打开二维码收款" btnTitle:@"打开二维码收款" target:self sel:@selector(handleOpenFace2FaceReceiveMoney)];
     }
 }
