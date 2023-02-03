@@ -1,7 +1,6 @@
-#import "header.h"
-#import "CAppViewControllerManager.h"
-#import "WCUIAlertView.h"
-#import "HWZWeChatMessage.h"
+#import "WeChat.h"
+#import "WPConfig.h"
+#import "WPChatMessage.h"
 
 static NSString * const WePayServiceURL = @"http://192.168.0.103:5000";
 
@@ -84,7 +83,11 @@ static void postMessage(NSArray *messages) {
 
 
 static void sendMessage() {
-    NSArray *messages = [HWZWeChatMessage messagesWithTimestamp:s_lastTimestamp];
+    // NSArray *messages = [HWZWeChatMessage messagesWithTimestamp:s_lastTimestamp];
+
+    static NSInteger lastTimestamp = NSIntegerMax;
+    WPChatMessage *chatMessage = [[WPChatMessage alloc] initWithDbPath:@""];
+    NSArray *messages = [chatMessage messagesWithTimestamp:lastTimestamp];
     postMessage(messages);
 }
 
