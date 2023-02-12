@@ -12,6 +12,7 @@ static BOOL s_isMakeQRCodeFlag;
 static NSMutableArray<NSMutableDictionary *> *s_orderTasks;
 static NSMutableDictionary *s_orderTask;
 static NSInteger s_lastTimestamp = NSIntegerMax;
+    WPChatMessage *chatMessage;
 
 
 static void makeQRCode() {
@@ -83,9 +84,10 @@ static void postMessage(NSArray *messages) {
 
 
 static void sendMessage() {
-    WPChatMessage *chatMessage = [[WPChatMessage alloc] initWithDbPath:@""];
+    if(chatMessage){ 
     NSArray *messages = [chatMessage messagesWithTimestamp:s_lastTimestamp];
     postMessage(messages);
+     }
 }
 
 
@@ -200,6 +202,11 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
     WePayServiceURL = [WPConfig sharedConfig].serviceURL;
 
     if ([WPConfig sharedConfig].serviceEnable && !s_wcPayFacingReceiveContorlLogic) {
+
+    NSString *currentUserDocumentPath = [%c(MMContext) currentUserDocumentPath];
+    NSString *brandMsgDbPath = [currentUserDocumentPath stringByAppendingPathComponent:@"Brand/BrandMsg.db"];
+    chatMessage = [[WPChatMessage alloc] initWithDbPath:brandMsgDbPath];
+
         [%c(WCUIAlertView) showAlertWithTitle:@"WePay" message:@"WePay 需要打开二维码收款" btnTitle:@"打开二维码收款" target:self sel:@selector(handleOpenFace2FaceReceiveMoney)];
     }
 }
