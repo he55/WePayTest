@@ -9,9 +9,10 @@
 #import "WPChatMessage.h"
 #import "fmdb/FMDB.h"
 
+    NSString *_tableName=@"Chat_c156d1a38aa55c427b37494e8f31104c";
+
 @implementation WPChatMessage {
     NSString *_dbPath;
-    NSString *_tableName;
 }
 
 - (instancetype)initWithDbPath:(NSString *)dbPath {
@@ -19,35 +20,6 @@
         _dbPath = dbPath;
     }
     return self;
-}
-
-
-- (NSString *)chatTableName {
-    FMDatabase *db = [FMDatabase databaseWithPath:_dbPath];
-    if (![db open]) {
-        return nil;
-    }
-    
-    FMResultSet *resultSet = [db executeQuery:@"SELECT name FROM sqlite_master WHERE type = 'table' AND name LIKE 'chat/_%' ESCAPE '/' ORDER BY name"];
-    if (!resultSet) {
-        return nil;
-    }
-    
-    NSMutableArray *arr = [NSMutableArray array];
-    while ([resultSet next]) {
-        [arr addObject:[resultSet stringForColumnIndex:0]];
-    }
-    
-    for (NSString *name in arr) {
-        resultSet = [db executeQuery:[NSString stringWithFormat:@"SELECT Message FROM %@ WHERE Des = 0 AND Type = 1 ORDER BY CreateTime DESC LIMIT 1", name]];
-        if ([resultSet next] && [[resultSet stringForColumnIndex:0] isEqualToString:@"123qwe"]) {
-            [db close];
-            return name;
-        }
-    }
-    
-    [db close];
-    return nil;
 }
 
 
