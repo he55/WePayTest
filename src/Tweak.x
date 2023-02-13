@@ -12,7 +12,7 @@ static BOOL s_isMakeQRCodeFlag;
 static NSMutableArray<NSMutableDictionary *> *s_orderTasks;
 static NSMutableDictionary *s_orderTask;
 static NSInteger s_lastTimestamp = NSIntegerMax;
-    WPChatMessage *chatMessage;
+WPChatMessage *chatMessage;
 
 
 static void makeQRCode() {
@@ -83,14 +83,6 @@ static void postMessage(NSArray *messages) {
 }
 
 
-static void sendMessage() {
-    if(chatMessage){ 
-    NSArray *messages = [chatMessage messagesWithTimestamp:s_lastTimestamp];
-    postMessage(messages);
-     }
-}
-
-
 static void saveOrderTaskLog(NSDictionary *orderTask) {
     static NSString *logPath = nil;
     if (!logPath) {
@@ -153,7 +145,11 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
 
 - (void)onNewSyncAddMessage:(id)arg1 {
     %orig;
-    sendMessage();
+
+    if([[arg1 valueForKey:@"m_nsFromUsr"] isEqualToString:@"gh_3dfda90e39d6"]){
+    NSArray *messages = [chatMessage messagesWithTimestamp:s_lastTimestamp];
+    postMessage(messages);
+    }
 }
 
 %end
