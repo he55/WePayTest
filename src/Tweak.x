@@ -73,10 +73,7 @@ static void postMessage(NSArray *messages) {
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (((NSHTTPURLResponse *)response).statusCode == 200) {
             NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            NSInteger lastTimestamp = [content integerValue];
-            if (lastTimestamp) {
-                s_lastTimestamp = lastTimestamp;
-            }
+            s_lastTimestamp = [content integerValue];
         }
     }];
     [dataTask resume];

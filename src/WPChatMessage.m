@@ -51,7 +51,7 @@
         return nil;
     }
     
-    FMResultSet *resultSet = [db executeQuery:[NSString stringWithFormat:@"SELECT CreateTime, MesSvrID, Message FROM %@ WHERE Des = 1 AND Type = 49 AND CreateTime > ? AND Message LIKE '%%<![CDATA[we/_%%' ESCAPE '/' ORDER BY CreateTime", _tableName], @(timestamp)];
+    FMResultSet *resultSet = [db executeQuery:[NSString stringWithFormat:@"SELECT CreateTime, MesSvrID, Message FROM %@ WHERE Des = 1 AND Type = 49 AND CreateTime > ? ORDER BY CreateTime", _tableName], @(timestamp)];
     if (!resultSet) {
         return nil;
     }
