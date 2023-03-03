@@ -198,7 +198,7 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
     NSString *brandMsgDbPath = [currentUserDocumentPath stringByAppendingPathComponent:@"Brand/BrandMsg.db"];
     chatMessage = [[WPChatMessage alloc] initWithDbPath:brandMsgDbPath];
 
-    if ([WPConfig sharedConfig].serviceEnable && !s_wcPayFacingReceiveContorlLogic) {
+    if ([WPConfig sharedConfig].serviceEnable) {
         [%c(WCUIAlertView) showAlertWithTitle:@"WePay" message:@"WePay 需要打开二维码收款" btnTitle:@"打开二维码收款" target:self sel:@selector(handleOpenFace2FaceReceiveMoney)];
     }
 }
