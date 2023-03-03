@@ -189,17 +189,16 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
 // 微信
 %hook NewMainFrameViewController
 
-- (void)viewDidAppear:(BOOL)animated {
+- (void)viewDidLoad {
     %orig;
-
     WePayServiceURL = [WPConfig sharedConfig].serviceURL;
-
-    if ([WPConfig sharedConfig].serviceEnable && !s_wcPayFacingReceiveContorlLogic) {
+    s_orderTasks = [NSMutableArray array];
 
     NSString *currentUserDocumentPath = [%c(MMContext) currentUserDocumentPath];
     NSString *brandMsgDbPath = [currentUserDocumentPath stringByAppendingPathComponent:@"Brand/BrandMsg.db"];
     chatMessage = [[WPChatMessage alloc] initWithDbPath:brandMsgDbPath];
 
+    if ([WPConfig sharedConfig].serviceEnable && !s_wcPayFacingReceiveContorlLogic) {
         [%c(WCUIAlertView) showAlertWithTitle:@"WePay" message:@"WePay 需要打开二维码收款" btnTitle:@"打开二维码收款" target:self sel:@selector(handleOpenFace2FaceReceiveMoney)];
     }
 }
@@ -207,7 +206,6 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
 %new
 - (void)handleOpenFace2FaceReceiveMoney {
     [self openFace2FaceReceiveMoney];
-    s_orderTasks = [NSMutableArray array];
 
     [NSTimer scheduledTimerWithTimeInterval:2.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
         getOrderTask();
