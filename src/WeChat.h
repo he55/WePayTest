@@ -4,12 +4,32 @@ typedef id CDUnknownBlockType;
 
 #pragma mark -
 
+@interface WCPayQRCodeCollectionFixedAmountData : NSObject
+{
+    _Bool _payerDescRequired;
+    NSString *_QRCodeURL;
+    NSString *_desc;
+    long long _amount;
+    NSString *_payerDescPlaceholder;
+}
+
+@property(retain, nonatomic) NSString *payerDescPlaceholder; // @synthesize payerDescPlaceholder=_payerDescPlaceholder;
+@property(nonatomic) _Bool payerDescRequired; // @synthesize payerDescRequired=_payerDescRequired;
+@property(nonatomic) long long amount; // @synthesize amount=_amount;
+@property(retain, nonatomic) NSString *desc; // @synthesize desc=_desc;
+@property(retain, nonatomic) NSString *QRCodeURL; // @synthesize QRCodeURL=_QRCodeURL;
+- (void)reset;
+
+@end
+
 @interface WCPayTransferGetFixedAmountQRCodeResponse : NSObject
 @property(nonatomic) unsigned int qrcode_level; // @synthesize qrcode_level=_qrcode_level;
 @property(retain, nonatomic) NSString *m_nsFixedAmountQRCode; // @synthesize m_nsFixedAmountQRCode;
 @end
 
 @interface WCPayControlData : NSObject
+@property(retain, nonatomic) WCPayQRCodeCollectionFixedAmountData *fixedAmountCollectionData; // @synthesize fixedAmountCollectionData=_fixedAmountCollectionData;
+
 @property(nonatomic) int fixed_qrcode_level; // @synthesize fixed_qrcode_level=_fixed_qrcode_level;
 @property(nonatomic) int m_enWCPayFacingReceiveMoneyScene; // @synthesize m_enWCPayFacingReceiveMoneyScene;
 @property(retain, nonatomic) NSString *m_nsFixedAmountReceiveMoneyQRCode; // @synthesize m_nsFixedAmountReceiveMoneyQRCode;
@@ -35,6 +55,9 @@ typedef id CDUnknownBlockType;
 @end
 
 @interface WCPayFacingReceiveContorlLogic : WCPayControlLogic
+- (void)continueOnSuccessfullyGetShortTermQrcodeResp:(int)arg1 hasDesc:(_Bool)arg2;
+- (void)onCgiGetShortTermQrcodeResp:(id)arg1;
+
 - (void)startLogic;
 - (id)initWithData:(id)arg1;
 - (void)OnGetFixedAmountQRCode:(WCPayTransferGetFixedAmountQRCodeResponse *)arg1 Error:(id)arg2;
