@@ -22,6 +22,7 @@ static void makeQRCode() {
             while (s_orderTasks.count) {
                 NSMutableDictionary * orderTask = s_orderTasks[0];
                 [s_orderTasks removeObject:orderTask];
+                [s_orderTasks2 addObject:orderTask];
                 [s_wcPayFacingReceiveContorlLogic WCPayFacingReceiveFixedAmountViewControllerNext:orderTask[@"orderAmount"] Description:orderTask[@"orderId"]];
             }
             isMake = NO;
