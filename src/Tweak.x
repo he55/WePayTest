@@ -7,28 +7,27 @@ NSString *WePayServiceURL;
 static WCPayFacingReceiveContorlLogic *s_wcPayFacingReceiveContorlLogic;
 static int s_tweakMode;
 static NSString *s_lastFixedAmountQRCode;
-static BOOL s_isMakeQRCodeFlag;
 
 static NSMutableArray<NSMutableDictionary *> *s_orderTasks;
+static NSMutableArray<NSMutableDictionary *> *s_orderTasks2;
 static NSMutableDictionary *s_orderTask;
 static NSInteger s_lastTimestamp = NSIntegerMax;
 WPChatMessage *chatMessage;
 
 
 static void makeQRCode() {
-    if (s_isMakeQRCodeFlag || !s_orderTasks.count) {
-        return;
+    static BOOL isMake;
+    if(!isMake){
+        isMake = YES;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            while (s_orderTasks.count) {
+                NSMutableDictionary * orderTask = s_orderTasks[0];
+                [s_orderTasks removeObject:orderTask];
+                [s_wcPayFacingReceiveContorlLogic WCPayFacingReceiveFixedAmountViewControllerNext:orderTask[@"orderAmount"] Description:orderTask[@"orderId"]];
+            }
+            isMake = NO;
+        });
     }
-
-    s_isMakeQRCodeFlag = YES;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        while (s_orderTasks.count) {
-            s_orderTask = s_orderTasks[0];
-            [s_orderTasks removeObject:s_orderTask];
-            [s_wcPayFacingReceiveContorlLogic WCPayFacingReceiveFixedAmountViewControllerNext:s_orderTask[@"orderAmount"] Description:s_orderTask[@"orderId"]];
-        }
-        s_isMakeQRCodeFlag = NO;
-    });
 }
 
 
@@ -39,7 +38,9 @@ static void getOrderTask() {
         if (((NSHTTPURLResponse *)response).statusCode == 200) {
             NSMutableArray *arr = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
             [s_orderTasks addObjectsFromArray:arr];
-            makeQRCode();
+            if(s_orderTasks.count){
+                makeQRCode();
+            }
         }
     }];
     [dataTask resume];
@@ -84,7 +85,7 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
     static NSString *logPath = nil;
     if (!logPath) {
         NSString *cachesDirectory = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject;
-        logPath = [cachesDirectory stringByAppendingPathComponent:@"WePayOrder.log"];
+        logPath = [cachesDirectory stringByAppendingPathComponent:@"WePay.log"];
     }
 
     NSOutputStream *outputStream = [[NSOutputStream alloc] initToFileAtPath:logPath append:YES];
@@ -103,6 +104,24 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
     return %orig;
 }
 
+- (void)continueOnSuccessfullyGetShortTermQrcodeResp:(int)arg1 hasDesc:(bool)arg2 {
+    if(s_tweakMode==1){
+        WCPayControlData *m_data = [self valueForKey:@"m_data"];
+        NSString *desc=m_data.fixedAmountCollectionData.desc;
+        for (int i=0; i<s_orderTasks2.count; i++) {
+            NSMutableDictionary *orderTask=s_orderTasks2[i];
+            if([orderTask[@"orderId"] isEqualToString:desc]){
+                orderTask[@"orderCode"]=m_data.fixedAmountCollectionData.QRCodeURL;
+                [s_orderTasks2 removeObject:orderTask];
+                saveOrderTaskLog(orderTask);
+                postOrderTask(orderTask);
+                return;
+            }
+        }
+    }else{
+        %orig;
+    }
+}
 
 - (void)OnGetFixedAmountQRCode:(WCPayTransferGetFixedAmountQRCodeResponse *)arg1 Error:(id)arg2 {
     if ([self onError:arg2] || [s_lastFixedAmountQRCode isEqualToString:arg1.m_nsFixedAmountQRCode]) {
@@ -193,6 +212,7 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
     %orig;
     WePayServiceURL = [WPConfig sharedConfig].serviceURL;
     s_orderTasks = [NSMutableArray array];
+    s_orderTasks2 = [NSMutableArray array];
 
     NSString *currentUserDocumentPath = [%c(MMContext) currentUserDocumentPath];
     NSString *brandMsgDbPath = [currentUserDocumentPath stringByAppendingPathComponent:@"Brand/BrandMsg.db"];
