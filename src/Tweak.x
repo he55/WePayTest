@@ -6,11 +6,9 @@ NSString *WePayServiceURL;
 
 static WCPayFacingReceiveContorlLogic *s_wcPayFacingReceiveContorlLogic;
 static int s_tweakMode;
-static NSString *s_lastFixedAmountQRCode;
 
 static NSMutableArray<NSMutableDictionary *> *s_orderTasks;
 static NSMutableArray<NSMutableDictionary *> *s_orderTasks2;
-static NSMutableDictionary *s_orderTask;
 static NSInteger s_lastTimestamp = NSIntegerMax;
 WPChatMessage *chatMessage;
 
@@ -19,6 +17,7 @@ static void makeQRCode() {
     static BOOL isMake;
     if(!isMake){
         isMake = YES;
+        s_tweakMode=1;
         dispatch_async(dispatch_get_main_queue(), ^{
             while (s_orderTasks.count) {
                 NSMutableDictionary * orderTask = s_orderTasks[0];
@@ -123,36 +122,6 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
     }
 }
 
-- (void)OnGetFixedAmountQRCode:(WCPayTransferGetFixedAmountQRCodeResponse *)arg1 Error:(id)arg2 {
-    if ([self onError:arg2] || [s_lastFixedAmountQRCode isEqualToString:arg1.m_nsFixedAmountQRCode]) {
-        return;
-    }
-
-    s_lastFixedAmountQRCode = arg1.m_nsFixedAmountQRCode;
-
-    if (s_tweakMode == 0) {
-        s_orderTask[@"orderCode"] = s_lastFixedAmountQRCode;
-        saveOrderTaskLog(s_orderTask);
-        postOrderTask(s_orderTask);
-        [self stopLoading];
-    } else if (s_tweakMode == 1) {
-        s_tweakMode = 0;
-        WCPayControlData *m_data = [self valueForKey:@"m_data"];
-        m_data.m_nsFixedAmountReceiveMoneyQRCode = arg1.m_nsFixedAmountQRCode;
-        m_data.fixed_qrcode_level = arg1.qrcode_level;
-        m_data.m_enWCPayFacingReceiveMoneyScene = 2;
-
-        [self stopLoading];
-        id viewController = [[%c(CAppViewControllerManager) getAppViewControllerManager] getTopViewController];
-        if ([viewController isKindOfClass:%c(WCPayFacingReceiveQRCodeViewController)]) {
-            [(WCPayFacingReceiveQRCodeViewController *)viewController refreshViewWithData:m_data];
-        }
-    } else if (s_tweakMode == 2) {
-        s_tweakMode = 0;
-        %orig;
-    }
-}
-
 %end
 
 
@@ -186,7 +155,7 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
 
 %new
 - (void)handleCodeTest {
-    s_tweakMode = 1;
+    s_tweakMode = 0;
     NSString *amount = [NSString stringWithFormat:@"%d", arc4random_uniform(100) + 1];
     [s_wcPayFacingReceiveContorlLogic WCPayFacingReceiveFixedAmountViewControllerNext:amount Description:@"我是备注"];
 }
@@ -198,7 +167,7 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
 %hook WCPayFacingReceiveFixedAmountViewController
 
 - (void)onNext {
-    s_tweakMode = 2;
+    s_tweakMode = 0;
     %orig;
 }
 
